@@ -9,8 +9,9 @@ var _expect2 = _interopRequireDefault(_expect);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var toggleTodo = function toggleTodo(todo) {
-  todo.completed = !todo.completed;
-  return todo;
+  return Object.assign({}, todo, {
+    completed: !todo.completed
+  });
 };
 
 var testToggleTodo = function testToggleTodo() {

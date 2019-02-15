@@ -4,8 +4,9 @@
 import expect from 'expect'
 
 const toggleTodo = (todo) => {
-  todo.completed = !todo.completed
-  return todo
+  return Object.assign({}, todo, {
+    completed: !todo.completed
+  })
 }
 
 const testToggleTodo = () => {
