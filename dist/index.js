@@ -1,5 +1,7 @@
 'use strict';
 
+var _redux = require('redux');
+
 var _expect = require('expect');
 
 var _expect2 = _interopRequireDefault(_expect);
@@ -24,6 +26,8 @@ var todo = function todo(state, action) {
       return Object.assign({}, state, {
         completed: !state.completed
       });
+    default:
+      return state;
   }
 };
 
@@ -41,6 +45,28 @@ var todos = function todos() {
     default:
       return state;
   }
+};
+
+var visibilityFilter = function visibilityFilter() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'SHOW_ALL';
+  var action = arguments[1];
+
+  switch (action.type) {
+    case 'SET_VISIBILITY_FILTER':
+      return action.filter;
+    default:
+      return state;
+  }
+};
+
+var todoApp = function todoApp() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var action = arguments[1];
+
+  return {
+    todos: todos(state.todos, action),
+    visibilityFilter: visibilityFilter(state.visibilityFilter, action)
+  };
 };
 
 var testAddTodo = function testAddTodo() {
@@ -90,6 +116,11 @@ var testToggleTodo = function testToggleTodo() {
   (0, _expect2.default)(todos(stateBefore, action)).toEqual(stateAfter);
 };
 
+var store = (0, _redux.createStore)(todoApp);
+
 testAddTodo();
 testToggleTodo();
+
 console.log('All tests passed');
+console.log('------------');
+console.log(store.getState());

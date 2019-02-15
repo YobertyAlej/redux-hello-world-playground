@@ -1,5 +1,6 @@
 'use strict'
 
+import { createStore } from 'redux'
 import expect from 'expect'
 
 const todo = (state, action) => {
@@ -18,6 +19,8 @@ const todo = (state, action) => {
       return Object.assign({}, state, {
         completed: !state.completed
       })
+    default:
+      return state
   }
 }
 
@@ -32,6 +35,31 @@ const todos = (state = [], action) => {
       return state.map(t => todo(t, action))
     default:
       return state
+  }
+}
+
+const visibilityFilter = (
+  state = 'SHOW_ALL',
+  action
+) => {
+  switch (action.type) {
+    case 'SET_VISIBILITY_FILTER':
+      return action.filter
+    default:
+      return state
+  }
+}
+
+const todoApp = (state = {}, action) => {
+  return {
+    todos: todos(
+      state.todos,
+      action
+    ),
+    visibilityFilter: visibilityFilter(
+      state.visibilityFilter,
+      action
+    )
   }
 }
 
@@ -92,9 +120,13 @@ const testToggleTodo = () => {
   expect(
     todos(stateBefore, action)
   ).toEqual(stateAfter)
-
 }
+
+const store = createStore(todoApp)
 
 testAddTodo()
 testToggleTodo()
+
 console.log('All tests passed')
+console.log('------------')
+console.log(store.getState())
