@@ -59,15 +59,23 @@ var visibilityFilter = function visibilityFilter() {
   }
 };
 
-var todoApp = function todoApp() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var action = arguments[1];
+var todoApp = (0, _redux.combineReducers)({
+  todos: todos,
+  visibilityFilter: visibilityFilter
+});
 
-  return {
-    todos: todos(state.todos, action),
-    visibilityFilter: visibilityFilter(state.visibilityFilter, action)
-  };
-};
+// const todoApp = (state = {}, action) => {
+//   return {
+//     todos: todos(
+//       state.todos,
+//       action
+//     ),
+//     visibilityFilter: visibilityFilter(
+//       state.visibilityFilter,
+//       action
+//     )
+//   }
+// }
 
 var testAddTodo = function testAddTodo() {
   var stateBefore = [];

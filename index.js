@@ -1,6 +1,6 @@
 'use strict'
 
-import { createStore } from 'redux'
+import { combineReducers, createStore } from 'redux'
 import expect from 'expect'
 
 const todo = (state, action) => {
@@ -50,18 +50,10 @@ const visibilityFilter = (
   }
 }
 
-const todoApp = (state = {}, action) => {
-  return {
-    todos: todos(
-      state.todos,
-      action
-    ),
-    visibilityFilter: visibilityFilter(
-      state.visibilityFilter,
-      action
-    )
-  }
-}
+const todoApp = combineReducers({
+  todos,
+  visibilityFilter
+})
 
 const testAddTodo = () => {
   const stateBefore = []
