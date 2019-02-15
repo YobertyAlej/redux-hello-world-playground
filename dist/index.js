@@ -18,6 +18,10 @@ var removeCounter = function removeCounter(list, index) {
   return [].concat(_toConsumableArray(list.slice(0, index)), _toConsumableArray(list.slice(index + 1)));
 };
 
+var incrementCounter = function incrementCounter(list, index) {
+  return [].concat(_toConsumableArray(list.slice(0, index)), [list[index] + 1], _toConsumableArray(list.slice(index + 1)));
+};
+
 var testAddCounter = function testAddCounter() {
   var listBefore = [];
   var listAfter = [0];
@@ -30,6 +34,14 @@ var testRemoveCounter = function testRemoveCounter() {
   (0, _expect2.default)(removeCounter(listBefore, 1)).toEqual(listAfter);
 };
 
+var testIncrementCounter = function testIncrementCounter() {
+  var listBefore = [0, 10, 20];
+  var listAfter = [0, 11, 20];
+
+  (0, _expect2.default)(incrementCounter(listBefore, 1)).toEqual(listAfter);
+};
+
 testAddCounter();
 testRemoveCounter();
+testIncrementCounter();
 console.log('All tests passed');
