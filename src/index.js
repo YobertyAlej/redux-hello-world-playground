@@ -1,7 +1,8 @@
 'use strict'
 
 import { createStore } from 'redux'
-import expect from 'expect'
+import React from 'react'
+import ReactDOM from 'react-dom'
 
 const todo = (state, action) => {
   switch (action.type) {
@@ -70,70 +71,45 @@ const todoApp = combineReducers({
   visibilityFilter
 })
 
-const testAddTodo = () => {
-  const stateBefore = []
-  const action = {
-    type: 'ADD_TODO',
-    id: 0,
-    text: 'Learn Redux'
-  }
-  const stateAfter = [
-    {
-      id: 0,
-      text: 'Learn Redux',
-      completed: false
-    }
-  ]
-
-  expect(
-    todos(stateBefore, action)
-  ).toEqual(stateAfter)
-}
-
-const testToggleTodo = () => {
-  const stateBefore = [
-    {
-      id: 0,
-      text: 'Learn Redux',
-      completed: false
-    },
-    {
-      id: 1,
-      text: 'Go shopping',
-      completed: false
-    }
-  ]
-
-  const action = {
-    type: 'TOGGLE_TODO',
-    id: 1,
-    text: 'Go shopping',
-    completed: true
-  }
-
-  const stateAfter = [
-    {
-      id: 0,
-      text: 'Learn Redux',
-      completed: false
-    },
-    {
-      id: 1,
-      text: 'Go shopping',
-      completed: true
-    }
-  ]
-
-  expect(
-    todos(stateBefore, action)
-  ).toEqual(stateAfter)
-}
-
 const store = createStore(todoApp)
 
-testAddTodo()
-testToggleTodo()
+let nextTodoId = 0
+class TodoApp extends React.Component {
+  render () {
+    return (
+      <div>
+        <input ref={node => {
+          this.input = node
+        }}></input>
+        <button onClick={() => {
+          store.dispatch({
+            type: 'ADD_TODO',
+            text: this.input.value,
+            id: nextTodoId++
+          })
+          this.input.value = ''
+        }}>
+          Add todo +
+        </button>
+        <ul>
+          {this.props.todos.map(todo =>
+            <li key="todo.id">
+              {todo.text}
+            </li>
+          )}
+        </ul>
+      </div>
+    )
+  }
+}
 
-console.log('All tests passed')
-console.log('------------')
-console.log(store.getState())
+const render = () => {
+  ReactDOM.render(
+    <TodoApp
+      todos={store.getState().todos}/>,
+    document.getElementById('root')
+  )
+}
+
+store.subscribe(render)
+render()
