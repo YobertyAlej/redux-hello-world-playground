@@ -4,6 +4,29 @@ import { createStore } from 'redux'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+let nextTodoId = 0
+const addTodo = text => {
+  return {
+    type: 'ADD_TODO',
+    id: nextTodoId++,
+    text
+  }
+}
+
+const toggleTodo = id => {
+  return {
+    type: 'TOGGLE_TODO',
+    id
+  }
+}
+
+const setVisibilityFilter = filter => {
+  return {
+    type: 'SET_VISIBILITY_FILTER',
+    filter
+  }
+}
+
 const todo = (state, action) => {
   switch (action.type) {
     case 'ADD_TODO':
@@ -101,22 +124,24 @@ class FilterLink extends React.Component {
   }
   render () {
     const props = this.props
+    const { store } = this.context
     const state = store.getState()
 
     return (
       <Link
         active={ props.filter === state.visibilityFilter }
         onClick={ () =>
-          store.dispatch({
-            type: 'SET_VISIBILITY_FILTER',
-            filter: props.filter
-          })
+          store.dispatch(setVisibilityFilter(props.filter))
         }
       >
         { props.children }
       </Link>
     )
   }
+}
+
+FilterLink.contextTypes = {
+  store: React.PropTypes.object
 }
 
 const Todo = ({
@@ -145,7 +170,7 @@ const TodoList = ({
   </ul>
 )
 
-const AddTodo = () => {
+const AddTodo = (props) => {
   let input
 
   return (
@@ -154,11 +179,7 @@ const AddTodo = () => {
         input = node
       }}></input>
       <button onClick={() => {
-        store.dispatch({
-          type: 'ADD_TODO',
-          id: nextTodoId++,
-          text: input.value
-        })
+        store.dispatch(addTodo(input.value))
         input.value = ''
       }}>
         Add todo +
@@ -212,6 +233,7 @@ class VisibleTodoList extends React.Component {
 
   render () {
     const props = this.props
+    const { store } = this.context
     const state = store.getState()
 
     return (
@@ -223,17 +245,17 @@ class VisibleTodoList extends React.Component {
           )
         }
         onTodoClick={id =>
-          store.dispatch({
-            type: 'TOGGLE_TODO',
-            id
-          })
+          store.dispatch(toggleTodo(id))
         }
       />
     )
   }
 }
 
-let nextTodoId = 0
+VisibleTodoList.contextTypes = {
+  store: React.PropTypes.object
+}
+
 const TodoApp = () => (
   <div>
     <AddTodo />
@@ -242,7 +264,25 @@ const TodoApp = () => (
   </div>
 )
 
+class Provider extends React.Component {
+  getChildContext () {
+    return {
+      store: this.props.store
+    }
+  }
+
+  render () {
+    return this.props.children
+  }
+}
+
+Provider.childContextTypes = {
+  store: React.PropTypes.object
+}
+
 ReactDOM.render(
-  <TodoApp />,
+  <Provider store={createStore(todoApp)}>
+    <TodoApp />
+  </Provider>,
   document.getElementById('root')
 )
